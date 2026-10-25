@@ -10,40 +10,5 @@ spring.sql.init.mode=always
  docker run  --rm --entrypoint id petclinic:v2                    
 uid=999(app) gid=999(app) groups=999(app)
 
-PS C:\Users\abdul\OneDrive\Desktop\Project\Petclinic\spring-petclinic> docker run -d --name pc --rm -p 8080:8080 petclinic:v3
-b551c9a9a553f329efecbe3a4eb6c722888df66d81a3fc115cb1e76ac91a0e7b
-PS C:\Users\abdul\OneDrive\Desktop\Project\Petclinic\spring-petclinic> docker ps
-CONTAINER ID   IMAGE          COMMAND               CREATED                  STATUS                            PORTS                                         NAMES
-b551c9a9a553   petclinic:v3   "java -jar app.jar"   Less than a second ago   Up 4 seconds (health: starting)   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp   pc
-PS C:\Users\abdul\OneDrive\Desktop\Project\Petclinic\spring-petclinic> docker ps
-CONTAINER ID   IMAGE          COMMAND               CREATED                  STATUS                    PORTS                                         NAMES
-b551c9a9a553   petclinic:v3   "java -jar app.jar"   Less than a second ago   Up 13 seconds (healthy)   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp   pc
-PS C:\Users\abdul\OneDrive\Desktop\Project\Petclinic\spring-petclinic> docker ps
-CONTAINER ID   IMAGE          COMMAND               CREATED          STATUS                    PORTS                                         NAMES
-b551c9a9a553   petclinic:v3   "java -jar app.jar"   10 seconds ago   Up 23 seconds (healthy)   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp   pc
-PS C:\Users\abdul\OneDrive\Desktop\Project\Petclinic\spring-petclinic> docker inspect --format "{{json .State.Health}}" pc
-{"Status":"healthy","FailingStreak":0,"Log":[{"Start":"2026-10-25T15:31:42.435641077Z","End":"2026-10-25T15:31:42.629349048Z","ExitCode":0,"Output":"{\"groups\":[\"liveness\",\"readiness\"],\"status\":\"UP\"}"},{"Start":"2026-10-25T15:32:15.354754987Z","End":"2026-10-25T15:32:15.385183065Z","ExitCode":0,"Output":"{\"groups\":[\"liveness\",\"readiness\"],\"status\":\"UP\"}"}]}
-PS C:\Users\abdul\OneDrive\Desktop\Project\Petclinic\spring-petclinic> docker run -d --name bad --health-cmd "curl -fs http://localhost:8080/nope || exit 1" --health-interval 5s --health-retries 2 --health-start-period 30s petclinic:v3
-2f4cb74a926cc841ca999eef0242b004b807b6da049cb864c79d248c16bdae98
-PS C:\Users\abdul\OneDrive\Desktop\Project\Petclinic\spring-petclinic> docker ps                                 
-CONTAINER ID   IMAGE          COMMAND               CREATED                  STATUS                            PORTS      NAMES
-2f4cb74a926c   petclinic:v3   "java -jar app.jar"   Less than a second ago   Up 4 seconds (health: starting)   8080/tcp   bad
-PS C:\Users\abdul\OneDrive\Desktop\Project\Petclinic\spring-petclinic> docker ps
-CONTAINER ID   IMAGE          COMMAND               CREATED                  STATUS                            PORTS      NAMES
-2f4cb74a926c   petclinic:v3   "java -jar app.jar"   Less than a second ago   Up 9 seconds (health: starting)   8080/tcp   bad
-PS C:\Users\abdul\OneDrive\Desktop\Project\Petclinic\spring-petclinic> docker ps
-CONTAINER ID   IMAGE          COMMAND               CREATED                  STATUS                             PORTS      NAMES
-2f4cb74a926c   petclinic:v3   "java -jar app.jar"   Less than a second ago   Up 12 seconds (health: starting)   8080/tcp   bad
-PS C:\Users\abdul\OneDrive\Desktop\Project\Petclinic\spring-petclinic> docker ps
-CONTAINER ID   IMAGE          COMMAND               CREATED                  STATUS                             PORTS      NAMES
-2f4cb74a926c   petclinic:v3   "java -jar app.jar"   Less than a second ago   Up 13 seconds (health: starting)   8080/tcp   bad
-PS C:\Users\abdul\OneDrive\Desktop\Project\Petclinic\spring-petclinic> docker ps
-CONTAINER ID   IMAGE          COMMAND               CREATED          STATUS                             PORTS      NAMES
-2f4cb74a926c   petclinic:v3   "java -jar app.jar"   14 seconds ago   Up 26 seconds (health: starting)   8080/tcp   bad
-PS C:\Users\abdul\OneDrive\Desktop\Project\Petclinic\spring-petclinic> docker ps
-CONTAINER ID   IMAGE          COMMAND               CREATED          STATUS                             PORTS      NAMES
-2f4cb74a926c   petclinic:v3   "java -jar app.jar"   17 seconds ago   Up 32 seconds (health: starting)   8080/tcp   bad
-PS C:\Users\abdul\OneDrive\Desktop\Project\Petclinic\spring-petclinic> docker ps
-CONTAINER ID   IMAGE          COMMAND               CREATED          STATUS                      PORTS      NAMES
-2f4cb74a926c   petclinic:v3   "java -jar app.jar"   33 seconds ago   Up 48 seconds (unhealthy)   8080/tcp   bad
-PS C:\Users\abdul\OneDrive\Desktop\Project\Petclinic\spring-petclinic> 
+NAME                          IMAGE           COMMAND                  SERVICE    CREATED                  STATUS                   PORTS
+spring-petclinic-postgres-1   postgres:18.4   "docker-entrypoint.s…"   postgres   Less than a second ago   Up 6 seconds (healthy)   5432/tcp
