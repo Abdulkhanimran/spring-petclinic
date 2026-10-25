@@ -7,8 +7,10 @@ spring.datasource.password=${POSTGRES_PASS:petclinic}
 # SQL is written to be idempotent so this is safe
 spring.sql.init.mode=always
 
- docker run  --rm --entrypoint id petclinic:v2                    
-uid=999(app) gid=999(app) groups=999(app)
+ PS C:\Users\abdul\OneDrive\Desktop\Project\Petclinic\spring-petclinic> docker compose exec app printenv POSTGRES_URL
+jdbc:postgresql://postgres:5432/petclinic
 
-NAME                          IMAGE           COMMAND                  SERVICE    CREATED                  STATUS                   PORTS
-spring-petclinic-postgres-1   postgres:18.4   "docker-entrypoint.s…"   postgres   Less than a second ago   Up 6 seconds (healthy)   5432/tcp
+ docker compose ps
+NAME                          IMAGE                  COMMAND                  SERVICE    CREATED          STATUS                    PORTS
+spring-petclinic-app-1        spring-petclinic-app   "java -jar app.jar"      app        30 seconds ago   Up 29 seconds (healthy)   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
+spring-petclinic-postgres-1   postgres:18.4          "docker-entrypoint.s…"   postgres   2 hours ago      Up 2 hours (healthy)      5432/tcp
