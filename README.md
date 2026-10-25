@@ -42,7 +42,7 @@ You need Docker Desktop, or Docker with the Compose plugin.
 ## How it fits together
 
 ```
-browser â”€â”€> app (PetClinic, :8080) â”€â”€> postgres (:5432, Compose network only) â”€â”€> volume "db"
+browser ----> app (PetClinic, :8080) ----> postgres (:5432, Compose network only) ----> volume "db"
 ```
 
 ## Problems I hit and how I fixed them
