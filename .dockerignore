@@ -8,7 +8,9 @@ target/
 *.iml
 
 k8s/
-notes/
+Notes/
+build/
+.gradle/
 README.md
 
 .env
