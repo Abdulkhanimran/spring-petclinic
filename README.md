@@ -1,3 +1,65 @@
+# Spring PetClinic: containerised by Abdul Imran I
+
+This fork adds a production-style Docker setup to the Spring PetClinic sample app: a small, secure image, plus a Docker Compose stack with PostgreSQL. The original project README follows below.
+
+## What I built
+
+- **Multi-stage Dockerfile.** A Maven build stage (`maven:3.9-eclipse-temurin-17`) feeds a JRE-only runtime stage (`eclipse-temurin:17-jre`), so only the JAR ships. Compressed image size went from **494 MB to 169 MB (about 66% smaller)**.
+- **Fast rebuilds.** `pom.xml` is copied and its dependencies downloaded before the source code, so code changes reuse the cached dependency layer.
+- **Runs as a non-root user** (`app`, UID 999), with the JAR owned by that user.
+- **Health check** against Spring Boot Actuator (`/actuator/health`), with a 60-second start-up grace period.
+- **`.dockerignore`**, so build output, Git data and env files can never end up in the image.
+- **Docker Compose stack:**
+  - PostgreSQL 18, with a **named volume**, so data survives restarts
+  - a `pg_isready` health check on the database
+  - the app starts only once the database is **healthy** (`depends_on: condition: service_healthy`)
+  - the database port is not published: only the app can reach it
+- **Configuration through environment variables.** `SPRING_PROFILES_ACTIVE=postgres` and `POSTGRES_URL` point the same image at any database without a rebuild.
+- **Secrets kept out of Git.** Credentials live in `postgres.env` and `app.env`, which are git-ignored. `.example` templates are committed instead.
+
+## How to run it
+
+You need Docker Desktop, or Docker with the Compose plugin.
+
+1. Create the two env files from the templates, then set a password in both:
+   ```bash
+   cp postgresenvexample postgres.env      # Windows: copy postgres.env.example postgres.env
+   cp appenvexample app.env                # Windows: copy app.env.example app.env
+   ```
+2. Build and start:
+   ```bash
+   docker compose up -d --build
+   docker compose ps                         # both services should show (healthy)
+   ```
+3. Open **http://localhost:8080**. The health status is at **http://localhost:8080/actuator/health**.
+4. Check that the data really is in PostgreSQL:
+   ```bash
+   docker compose exec postgres psql -U username -d password -c "select first_name, last_name from owners;"
+   ```
+5. Stop it with `docker compose down`. The data is kept.
+   `docker compose down -v` also **deletes the volume and all its data**.
+
+## How it fits together
+
+```
+browser â”€â”€> app (PetClinic, :8080) â”€â”€> postgres (:5432, Compose network only) â”€â”€> volume "db"
+```
+
+## Problems I hit and how I fixed them
+
+- **The app couldn't reach the database at `localhost`.** Inside Compose, `localhost` is the app's own container. I set `POSTGRES_URL` to use the service name (`postgres`) instead.
+- **PostgreSQL 18 changed its data directory**, from `/var/lib/postgresql/data` to `/var/lib/postgresql`. I mounted the volume at the new path.
+- **The `$` in the health check was being filled in too early.** Compose substitutes `${...}` on the host, so I used `$$` to leave it for the container's shell.
+- **An env file with a password was committed.** I removed it from Git, git-ignored it, and committed `.example` templates.
+- **`.dockerignore` didn't shrink the build context.** BuildKit only sends the files the `COPY` lines need. I kept the file anyway, as a safety net against secrets.
+
+## Next
+
+- A Jenkins CI pipeline: build, test, SonarQube, image scan, push
+- Terraform: run this image on AWS ECS Fargate, with RDS PostgreSQL
+- Kubernetes manifests, and a Helm chart
+
+
 # Spring PetClinic Sample Application [![Build Status](https://github.com/spring-projects/spring-petclinic/actions/workflows/maven-build.yml/badge.svg)](https://github.com/spring-projects/spring-petclinic/actions/workflows/maven-build.yml)[![Build Status](https://github.com/spring-projects/spring-petclinic/actions/workflows/gradle-build.yml/badge.svg)](https://github.com/spring-projects/spring-petclinic/actions/workflows/gradle-build.yml)
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/spring-projects/spring-petclinic) [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=7517918)
