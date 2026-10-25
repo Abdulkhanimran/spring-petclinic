@@ -14,7 +14,11 @@ FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 
-COPY --from=build /app/target/*.jar app.jar
+RUN groupadd -r app && useradd -r -g app app
+
+COPY --chown=app:app --from=build /app/target/*.jar app.jar
+
+USER app
 
 EXPOSE 8080
 
